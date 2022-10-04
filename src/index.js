@@ -1,11 +1,13 @@
-const express = require('express');
-const morgan = require('morgan');
-const exphbs = require('express-handlebars');
-const path = require('path');
+var express = require('express');
+var morgan = require('morgan');
+var exphbs = require('express-handlebars');
+var path = require('path');
+// nếu chỉ viết tên thư mục, tự động import từ file index.js
+var route = require('./routes');
 
-const app = express();
-const port = 3000;
-const hbs = exphbs.create({
+var app = express();
+var port = 3000;
+var hbs = exphbs.create({
     extname: '.hbs'
 });
 
@@ -28,21 +30,7 @@ app.engine('hbs', hbs.engine);
 app.set('view engine', 'hbs');
 app.set('views', path.join(__dirname, 'res/views'));
 
-// routing
-app.get('/', (req, res) => {
-    res.render('home');
-});
-
-app.get('/news', (req, res) => {
-    res.render('news');
-});
-
-app.get('/search', (req, res) => {
-    res.render('search');
-});
-
-app.post('/search', (req, res) => {
-    res.send('');
-});
+// routes init
+route(app);
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
