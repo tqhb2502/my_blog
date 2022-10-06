@@ -1,13 +1,17 @@
-var express = require('express');
-var morgan = require('morgan');
-var exphbs = require('express-handlebars');
-var path = require('path');
+const express = require('express');
+const morgan = require('morgan');
+const exphbs = require('express-handlebars');
+const path = require('path');
 // nếu chỉ viết tên thư mục, tự động import từ file index.js
-var route = require('./routes');
+const route = require('./routes');
+const db = require('./config/db');
 
-var app = express();
-var port = 3000;
-var hbs = exphbs.create({
+// connect to DB
+db.connect();
+
+const app = express();
+const port = 3000;
+const hbs = exphbs.create({
     extname: '.hbs'
 });
 
@@ -33,4 +37,4 @@ app.set('views', path.join(__dirname, 'res/views'));
 // routes init
 route(app);
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+app.listen(port, () => console.log(`App listening at http://localhost:${port}`));
