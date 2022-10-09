@@ -41,7 +41,7 @@ class CoursesController {
             });
     }
 
-    // [GET] courses/:id/update
+    // [GET] courses/:id/edit
     edit(req, res, next) {
         Course.findById(req.params.id)
             .then(course => res.render('courses/edit', {
@@ -50,9 +50,17 @@ class CoursesController {
             .catch(next);
     }
 
+    // [PUT] courses/:id
     update(req, res, next) {
         Course.updateOne({ _id: req.params.id }, req.body)
             .then(() => res.redirect('/me/courses'))
+            .catch(next);
+    }
+
+    // [DELETE] courses/:id
+    delete(req, res, next) {
+        Course.deleteOne({ _id: req.params.id })
+            .then(() => res.redirect('back'))
             .catch(next);
     }
 }

@@ -19,10 +19,53 @@
                 <td>{{this.updatedAt}}</td>
                 <td>
                     <a href="/courses/{{this._id}}/edit" class="btn btn-link">Sửa</a>
-                    <a href="" class="btn btn-link">Xóa</a>
+                    <a href="" class="btn btn-link" data-bs-toggle="modal" data-bs-target="#delete-course-modal" data-id="{{this._id}}">Xóa</a>
                 </td>
             </tr>
             {{/each}}
         </tbody>
     </table>
 </div>
+
+<!-- Delete course confirmation modal -->
+<div class="modal fade" id="delete-course-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận xóa khóa học</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        Bạn có chắc chắn muốn xóa khóa học này?
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="confirm-delete-btn" class="btn btn-danger">Xóa</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- Delete form --}}
+<form name="delete-form" method="POST"></form>
+
+{{!-- Xử lý xóa khóa học --}}
+<script>
+
+    var delConfirmModal = document.querySelector('#delete-course-modal');
+    var confirmDeleteBtn = document.querySelector('#confirm-delete-btn');
+    var courseID;
+
+    // Khi modal hiện lên
+    delConfirmModal.addEventListener('show.bs.modal', event => {
+        var button = event.relatedTarget;
+        courseID = button.getAttribute('data-id');
+    });
+
+    // Khi nhấn nút xác nhận xóa
+    confirmDeleteBtn.onclick = function () {
+        var deleteForm = document.forms['delete-form'];
+        deleteForm.action = `/courses/${courseID}?_method=DELETE`;
+        deleteForm.submit();
+    };
+</script>
