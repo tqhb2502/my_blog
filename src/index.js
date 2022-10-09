@@ -5,6 +5,7 @@ const path = require('path');
 // nếu chỉ viết tên thư mục, tự động import từ file index.js
 const route = require('./routes');
 const db = require('./config/db');
+const methodOverride = require('method-override');
 
 // connect to DB
 db.connect();
@@ -12,7 +13,10 @@ db.connect();
 const app = express();
 const port = 3000;
 const hbs = exphbs.create({
-    extname: '.hbs'
+    extname: '.hbs',
+    helpers: {
+        sum: (a, b) => a + b
+    }
 });
 
 // static file
@@ -25,6 +29,9 @@ app.use(express.urlencoded({
     extended: true
 }));
 app.use(express.json());
+
+// method override
+app.use(methodOverride('_method'));
 
 // HTTP logger
 // app.use(morgan('combined'));

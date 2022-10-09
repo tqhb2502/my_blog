@@ -40,6 +40,21 @@ class CoursesController {
                 res.send('ERROR!');
             });
     }
+
+    // [GET] courses/:id/update
+    edit(req, res, next) {
+        Course.findById(req.params.id)
+            .then(course => res.render('courses/edit', {
+                course: toSingleObject(course)
+            }))
+            .catch(next);
+    }
+
+    update(req, res, next) {
+        Course.updateOne({ _id: req.params.id }, req.body)
+            .then(() => res.redirect('/me/courses'))
+            .catch(next);
+    }
 }
 
 module.exports = new CoursesController;
