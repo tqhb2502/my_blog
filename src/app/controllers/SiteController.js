@@ -9,6 +9,11 @@ class SiteController {
     search(req, res) {
         res.render('search');
     }
+
+    // [GET] /news
+    news(req, res) {
+        res.render('news');
+    }
 }
 
 module.exports = new SiteController;

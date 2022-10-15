@@ -10,6 +10,15 @@ class MeController {
             }))
             .catch(next);
     }
+
+    // [GET] /me/trash/courses
+    showDeletedCourses(req, res, next) {
+        Course.findDeleted({})
+            .then(courses => res.render('me/deleted-courses', {
+                courses: toObjectArray(courses)
+            }))
+            .catch(next);
+    }
 }
 
 module.exports = new MeController;
