@@ -4,10 +4,13 @@ const { toObjectArray } = require('../../util/mongoose');
 class MeController {
     // [GET] /me/courses
     showCourses(req, res, next) {
-        Course.find({})
-            .then(courses => res.render('me/courses', {
-                courses: toObjectArray(courses)
-            }))
+        Promise.all([Course.find({}), Course.countDocumentsDeleted()])
+            .then(([courses, deletedCount]) =>
+                res.render('me/courses', {
+                    courses: toObjectArray(courses),
+                    deletedCount
+                })
+            )
             .catch(next);
     }
 
