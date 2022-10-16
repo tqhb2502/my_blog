@@ -7,6 +7,8 @@ router.get('/create', coursesController.create);
 router.post('/store', coursesController.store);
 router.get('/:slug', coursesController.detail);
 router.get('/:id/edit', coursesController.edit);
+router.post('/handle-mycourses-form', coursesController.handleMyCoursesForm);
+router.post('/handle-deletedcourses-form', coursesController.handleDeletedCoursesForm);
 router.put('/:id', coursesController.update);
 router.patch('/:id/restore', coursesController.restore);
 router.delete('/:id', coursesController.delete);

@@ -1,4 +1,4 @@
-<div class="mt-4">
+<form class="mt-4" method="POST" action="/courses/handle-mycourses-form">
 
   <div>
     <h3 class="d-inline-block">Khóa học của tôi</h3>
@@ -7,10 +7,28 @@
     <a href="/courses/create" class="d-inline-block">Thêm khóa học</a>
   </div>
 
-  <table class="table">
+  <div class="mt-4 d-flex h-select-all-container">
+
+    <div class="form-check">
+      <input class="form-check-input" type="checkbox" value="" id="checkbox-all">
+      <label class="form-check-label" for="checkbox-all">
+        Chọn tất cả
+      </label>
+    </div>
+
+    <select class="form-select form-select-sm h-select-all-action" name="action" aria-label="Default select example" required>
+      <option value="">-- Hành động --</option>
+      <option value="delete">Xóa</option>
+    </select>
+
+    <button class="exec-btn btn btn-primary btn-sm disabled">Thực hiện</button>
+  </div>
+
+  <table class="table mt-2">
       {{#if courses}}
       <thead>
           <tr>
+              <th scope="col"></th>
               <th scope="col">#</th>
               <th scope="col">Tên</th>
               <th scope="col">Chỉnh sửa gần nhất</th>
@@ -21,6 +39,11 @@
       <tbody>
           {{#each courses}}
           <tr>
+              <td>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" name="courseIDs[]" value="{{this._id}}">
+                </div>
+              </td>
               <th scope="row">{{sum @index 1}}</th>
               <td>{{this.name}}</td>
               <td>{{this.updatedAt}}</td>
@@ -30,14 +53,14 @@
               </td>
           </tr>
           {{else}}
-          <td colspan="4" class="text-center">
+          <td colspan="5" class="text-center">
             Bạn chưa đăng khóa học nào.
             <a href="/courses/create">Đăng khóa học</a>
           </td>
           {{/each}}
       </tbody>
   </table>
-</div>
+</form>
 
 <!-- Delete course confirmation modal -->
 <div class="modal fade" id="delete-course-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -64,6 +87,10 @@
 {{!-- Xử lý xóa khóa học --}}
 <script>
 
+    var checkboxAll = document.querySelector('#checkbox-all');
+    var courseItemCheckboxs = Array.from(document.querySelectorAll('input[name="courseIDs[]"]'));
+    var execBtn = document.querySelector('.exec-btn');
+
     var delConfirmModal = document.querySelector('#delete-course-modal');
     var confirmDeleteBtn = document.querySelector('#confirm-delete-btn');
     var courseID;
@@ -80,4 +107,35 @@
         deleteForm.action = `/courses/${courseID}?_method=DELETE`;
         deleteForm.submit();
     };
+
+    // Nhấn nút chọn tất cả
+    checkboxAll.onchange = function () {
+      var isCheckedAll = this.checked;
+      courseItemCheckboxs.forEach(courseItemCheckbox => {
+        courseItemCheckbox.checked = isCheckedAll;
+        renderExecBtn();
+      });
+    };
+
+    // Điều chỉnh nút chọn tất cả
+    // khi những nút chọn cho từng khóa học thay đổi
+    courseItemCheckboxs.forEach(courseItemCheckbox => {
+
+      courseItemCheckbox.onchange = function () {
+        
+        var isCheckedAll = courseItemCheckboxs.every(courseItemCheckbox => courseItemCheckbox.checked);
+        checkboxAll.checked = isCheckedAll;
+        renderExecBtn();
+      };
+    });
+
+    // điều chỉnh nút thực hiện khi có hoặc không có khóa nào đc chọn
+    function renderExecBtn() {
+      var isChecked = courseItemCheckboxs.some(courseItemCheckbox => courseItemCheckbox.checked);
+      if (isChecked) {
+        execBtn.classList.remove('disabled');
+      } else {
+        execBtn.classList.add('disabled');
+      }
+    }
 </script>
