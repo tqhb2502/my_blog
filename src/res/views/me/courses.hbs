@@ -1,4 +1,4 @@
-<form class="mt-4" method="POST" action="/courses/handle-mycourses-form">
+<form class="mt-4 action-form" method="POST" action="/courses/handle-mycourses-form">
 
   <div>
     <h3 class="d-inline-block">Khóa học của tôi</h3>
@@ -16,7 +16,7 @@
       </label>
     </div>
 
-    <select class="form-select form-select-sm h-select-all-action" name="action" aria-label="Default select example" required>
+    <select class="form-select form-select-sm h-select-all-action" name="action" aria-label="Default select example" required="required">
       <option value="">-- Hành động --</option>
       <option value="delete">Xóa</option>
     </select>
@@ -67,7 +67,7 @@
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <h1 class="modal-title fs-5" id="exampleModalLabel">Xác nhận xóa khóa học</h1>
+        <h1 class="modal-title fs-5">Xác nhận xóa khóa học</h1>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
@@ -81,15 +81,39 @@
   </div>
 </div>
 
+<!-- Delete selected courses confirmation modal -->
+<div class="modal fade" id="delete-selected-courses-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5">Xác nhận xóa khóa học</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body"></div>
+      <div class="modal-footer">
+        <button type="button" id="confirm-delete-selected-btn" class="btn btn-danger">Xóa</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 {{!-- Delete form --}}
 <form name="delete-form" method="POST"></form>
 
 {{!-- Xử lý xóa khóa học --}}
 <script>
 
+    var actionForm = document.querySelector('.action-form');
+
     var checkboxAll = document.querySelector('#checkbox-all');
     var courseItemCheckboxs = Array.from(document.querySelectorAll('input[name="courseIDs[]"]'));
     var execBtn = document.querySelector('.exec-btn');
+    var actionSelectElem = document.querySelector('select[name="action"]');
+
+    var delSelectedConfirmModal = $('#delete-selected-courses-modal');
+    var modalBody = $('#delete-selected-courses-modal .modal-body');
+    var confirmDelSelectedBtn = $('#confirm-delete-selected-btn');
 
     var delConfirmModal = document.querySelector('#delete-course-modal');
     var confirmDeleteBtn = document.querySelector('#confirm-delete-btn');
@@ -138,4 +162,35 @@
         execBtn.classList.add('disabled');
       }
     }
+
+    // khi nhấn nút THỰC HIỆN, không thực hiện hành vi mặc định, dựa vào hành động
+    // đã được lựa chọn để xử lý
+    execBtn.onclick = function (e) {
+
+      e.preventDefault();
+
+      // nếu hành động là XÓA, hiện hộp thoại xác nhận
+      if (actionSelectElem.value === "delete") {
+        var checkedNum = $('input[name="courseIDs[]"]:checked').length;
+        modalBody.append(`<p>Bạn có chắc chắn muốn xóa ${checkedNum} khóa học này?</p>`);
+        delSelectedConfirmModal.modal('show');
+      }
+      // còn lại, validate và submit form
+      else {
+        if (actionForm.reportValidity()) {
+          actionForm.submit();
+        }
+      }
+    };
+
+    // khi hộp thoại xác nhận xóa hiện lên, nếu chọn XÓA -> gửi form xóa các
+    // dữ liệu được chọn
+    confirmDelSelectedBtn.on('click', () => {
+      actionForm.submit();
+    });
+
+    // xóa thông báo trong hộp thoại được cho vào khi nó hiện lên
+    delSelectedConfirmModal.on('hide.bs.modal', () => {
+      modalBody.empty();
+    });
 </script>
