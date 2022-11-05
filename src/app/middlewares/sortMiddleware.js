@@ -14,4 +14,4 @@ function sortMiddleware(req, res, next) {
     next();
 }
 
-module.exports = SortMiddleware;
+module.exports = sortMiddleware;
