@@ -1,4 +1,4 @@
-function SortMiddleware(req, res, next) {
+function sortMiddleware(req, res, next) {
     res.locals.sortInfo = {
         enable: false,
         column: 'none',
