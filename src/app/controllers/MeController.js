@@ -4,15 +4,10 @@ const { toObjectArray } = require('../../util/mongoose');
 class MeController {
     // [GET] /me/courses
     showCourses(req, res, next) {
-        let getAllCoursesQuery = Course.find({});
-
-        if (req.query.hasOwnProperty('_sort')) {
-            getAllCoursesQuery = getAllCoursesQuery.sort({
-                [req.query.column]: req.query.type
-            });
-        }
-
-        Promise.all([getAllCoursesQuery, Course.countDocumentsDeleted()])
+        Promise.all([
+            Course.find({}).sortable(req),
+            Course.countDocumentsDeleted()
+        ])
             .then(([courses, deletedCount]) =>
                 res.render('me/courses', {
                     courses: toObjectArray(courses),

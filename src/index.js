@@ -15,30 +15,7 @@ const app = express();
 const port = 3000;
 const hbs = exphbs.create({
     extname: '.hbs',
-    helpers: {
-        sum: (a, b) => a + b,
-        sortIconDisplay: (field, sortInfo) => {
-            const icons = {
-                default: "fa-solid fa-sort",
-                asc: "fa-solid fa-arrow-down-short-wide",
-                desc: "fa-solid fa-arrow-down-wide-short"
-            };
-
-            const nextTypes = {
-                default: "asc",
-                asc: "desc",
-                desc: "asc"
-            };
-
-            const sortType = field === sortInfo.column ? sortInfo.type : 'default';
-            const icon = icons[sortType];
-            const nextType = nextTypes[sortType];
-
-            return `<a href="?_sort&column=${field}&type=${nextType}">
-                        <i class="${icon}"></i>
-                    </a>`;
-        }
-    }
+    helpers: require('./helpers/handlebars')
 });
 
 // static file
